@@ -1,7 +1,7 @@
-{:paths ["src" "test"]
- :deps  {com.walmartlabs/lacinia {:mvn/version "0.32.0-rc-2"}
-         org.clojure/clojure     {:mvn/version "1.10.0"}
-         org.clojure/tools.macro {:mvn/version "0.1.2"}
-         vincit/venia            {:mvn/version "0.2.5"}}
+{:paths   ["src"]
+ :deps    {com.walmartlabs/lacinia {:mvn/version "0.32.0-rc-2"}
+           org.clojure/clojure     {:mvn/version "1.10.0"}
+           org.clojure/tools.macro {:mvn/version "0.1.2"}}
 
- :aliases {:test {:extra-paths ["test"]}}}
+ :aliases {:dev {:extra-paths ["test"]
+                 :extra-deps  {vincit/venia {:mvn/version "0.2.5"}}}}}
