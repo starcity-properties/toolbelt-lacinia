@@ -72,6 +72,8 @@
 
 
 (s/def ::args (s/tuple any? any? any?))
+(s/def ::resolver (s/and keyword? #(some? (namespace %))))
+(s/def ::metadata (s/or :keyword #(= 1 (count %)) :map (s/keys :req-un [::resolver])))
 
 (defn- normalize-args* [& args]
   (map (fn [m]
@@ -87,13 +89,16 @@
   conditions as second argument and a body that should evaluate to valid GraphQL result.
   :authorization - predicate, collection of predicate or function to determine authorization for the resolver."
   [sym & body]
-  (let [[sym [args opts body]] (ctm/name-with-attributes sym body)
-        body           (if (nil? body) opts body)
-        [context params resolved] (apply normalize-args* args)]
-
+  (let [[sym [args opts body]]    (ctm/name-with-attributes sym body)
+        body                      (if (nil? body) opts body)
+        [context params resolved] (apply normalize-args* args)
+        metadata                  (meta sym)
+        resolver                  (or (:resolver metadata) (ffirst metadata))]
+    (assert (s/valid? ::metadata metadata (s/explain-str ::metadata metadata)))
+    (assert (s/valid? ::resolver resolver) (s/explain-str ::resolver resolver))
     (assert (s/valid? ::args args) (s/explain-str ::args args))
 
-    `(defn ~(vary-meta sym merge {:resolver (ffirst (meta sym))}) ~[context params resolved]
+    `(defn ~(vary-meta sym merge {:resolver resolver}) ~[context params resolved]
        (let [context#           ~(or (:as context) context)
              params#            ~(or (:as params) params)
              resolved#          ~(or (:as resolved) resolved)
