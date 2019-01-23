@@ -1,0 +1,4 @@
+{:deps
+ {org.clojure/clojure     {:mvn/version "1.10.0"}
+  com.walmartlabs/lacinia {:mvn/version "0.32.0-rc-2"}
+  vincit/venia            {:mvn/version "0.2.5"}}}
