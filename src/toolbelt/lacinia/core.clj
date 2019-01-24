@@ -134,8 +134,8 @@
        (let [context#           ~(or (:as context) context)
              params#            ~(or (:as params) params)
              resolved#          ~(or (:as resolved) resolved)
-             handle-unauthed#    ~(or (:unauthorized-handler opts) *unauthorized-handler*)
-             exception-handler# ~(or (:exception-handler opts) *exception-handler*)]
+             handle-unauthed#    (or ~(:unauthorized-handler opts) *unauthorized-handler*)
+             exception-handler#  (or ~(:exception-handler opts) *exception-handler*)]
          (try
            (if-not (authorized? ~(:authorization opts))
              (handle-unauthed# context# params# resolved#)

@@ -45,10 +45,16 @@
   (resolver-body (fn [_ _ _] (throw (ex-info "Test exception" {}))) params))
 
 
-(defresolver ^::resolver macro-resolver-authorized
+(defresolver ^::resolver macro-resolver
   [{:keys [requester] :as ctx} params resolved]
   {:authorization (= (:db/id dummy-account) (:db/id requester))}
   [ctx params resolved])
+
+
+(defresolver ^::resolver macro-resolver-exception
+  [{:keys [requester] :as ctx} params resolved]
+  {:authorization (= (:db/id dummy-account) (:db/id requester))}
+  (throw (ex-info "test exception" {})))
 
 
 (defresolver ^::resolver macro-resolver-unauthorized-handler
@@ -58,7 +64,7 @@
   (do nil))
 
 
-(defresolver ^::resolver macro-resolver-exception
+(defresolver ^::resolver macro-resolver-exception-handler
   [{:keys [requester] :as ctx} params resolved]
   {:authorization     (= (:db/id dummy-account) (:db/id requester))
    :exception-handler exception-handler}
@@ -73,7 +79,7 @@
   (testing "Macro should produce valid content if authorized."
     (is (= [{:requester dummy-account} {} {}]
            ((resolver {:authorized true}) {:requester dummy-account} {} {})
-           (macro-resolver-authorized {:requester dummy-account} {} {})))
+           (macro-resolver {:requester dummy-account} {} {})))
 
     (testing "Unauthorized handler should be used if provided."
       (let [[context params resolved :as args] [{:requester nil} {} {}]]
@@ -87,8 +93,16 @@
         (is (= {:exception args}
                ((resolver-with-exception {:authorized        true
                                           :exception-handler exception-handler}) context params resolved)
-               (macro-resolver-exception context params resolved)))))
+               (macro-resolver-exception-handler context params resolved)))))
 
     (testing "Exceptions thrown in a resolver should be wrapped and not thrown by the resolver."
       (let [[context params resolved] [{:requester true} {} {}]]
-        (is (macro-resolver-exception context params resolved))))))
+        (is (macro-resolver-exception-handler context params resolved))))
+
+    (testing "Binding unauthorized handler should use the bound handler."
+      (binding [lacinia/*unauthorized-handler* (fn [_ _ _] :bound-unauthorized)]
+        (is (= :bound-unauthorized (macro-resolver {:requester nil} {} {})))))
+
+    (testing "Binding exception handler should use the bound handler."
+      (binding [lacinia/*exception-handler* (fn [_ _ _ _] :bound-exception)]
+        (is (= :bound-exception (macro-resolver-exception {:requester dummy-account} {} {})))))))
