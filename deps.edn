@@ -3,5 +3,7 @@
            org.clojure/clojure     {:mvn/version "1.10.0"}
            org.clojure/tools.macro {:mvn/version "0.1.2"}}
 
- :aliases {:dev {:extra-paths ["test"]
-                 :extra-deps  {vincit/venia {:mvn/version "0.2.5"}}}}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                           :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                  :main-opts   ["-m" "cognitect.test-runner"]}}}

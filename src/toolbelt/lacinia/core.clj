@@ -2,10 +2,13 @@
   (:require
     [clojure.tools.macro :as ctm]
     [clojure.spec.alpha :as s]
-    [com.walmartlabs.lacinia.resolve :as resolve]))
+    [com.walmartlabs.lacinia.resolve :as resolve]
+    [com.walmartlabs.lacinia.schema :as schema]
+    [com.walmartlabs.lacinia.util :as util]
+    [com.walmartlabs.lacinia :as lacinia]))
 
 ;; =============================================================================
-;; Helpers
+;; Schema
 ;; =============================================================================
 
 
@@ -21,10 +24,10 @@
      (reduce resolvers* {} (mapcat ns-publics namespaces)))))
 
 
-(defn resolve-errors
-  "Return GraphQL error, will call `resolve-as` with nil as first argument and `errors` as the second argument."
-  [errors]
-  (resolve/resolve-as nil errors))
+(defn compile-attach
+  "Compile `schema` and attach `resolvers`."
+  [schema resolvers]
+  (schema/compile (util/attach-resolvers schema resolvers)))
 
 
 (defn parse-scalars
@@ -32,6 +35,20 @@
   returning nil if exception is thrown according to lacinia's flow."
   [f]
   (fn [v] (try (f v) (catch Throwable _ nil))))
+
+
+(def execute lacinia/execute)
+
+
+;; =============================================================================
+;; Resolver tools
+;; =============================================================================
+
+
+(defn resolve-errors
+  "Return GraphQL error, will call `resolve-as` with nil as first argument and `errors` as the second argument."
+  [errors]
+  (resolve/resolve-as nil errors))
 
 
 ;; =============================================================================
@@ -53,10 +70,10 @@
   [context params resolved]
   (if (nil? (:identity context))
     (resolve/resolve-as nil {:status  401
-                             :reason  :unauthenticated
+                             :reason  :unauthorized
                              :message "Please login to access these resources."})
     (resolve/resolve-as nil {:status  403
-                             :reason  :unauthorized
+                             :reason  :forbidden
                              :message "You don't have access to these resources."})))
 
 
