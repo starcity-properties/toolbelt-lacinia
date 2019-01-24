@@ -21,9 +21,23 @@
      (reduce resolvers* {} (mapcat ns-publics namespaces)))))
 
 
+(defn resolve-errors
+  "Return GraphQL error, will call `resolve-as` with nil as first argument and `errors` as the second argument."
+  [errors]
+  (resolve/resolve-as nil errors))
+
+
+(defn parse-scalars
+  "Helper function to parse/serialize custom scalars with function `f`, wrapping the call to `f` in a try/catch
+  returning nil if exception is thrown according to lacinia's flow."
+  [f]
+  (fn [v] (try (f v) (catch Throwable _ nil))))
+
+
 ;; =============================================================================
 ;; Authorization
 ;; =============================================================================
+
 
 (defn authorized?
   "Return true if the specified `authorization` option is true for single value or all true for sequential value."
@@ -89,11 +103,12 @@
   conditions as second argument and a body that should evaluate to valid GraphQL result.
   :authorization - predicate, collection of predicate or function to determine authorization for the resolver."
   [sym & body]
-  (let [[sym [args opts body]]    (ctm/name-with-attributes sym body)
+  (let [metadata                  (meta sym)
+        [sym [args opts body]]    (ctm/name-with-attributes sym body)
         body                      (if (nil? body) opts body)
         [context params resolved] (apply normalize-args* args)
-        metadata                  (meta sym)
         resolver                  (or (:resolver metadata) (ffirst metadata))]
+
     (assert (s/valid? ::metadata metadata (s/explain-str ::metadata metadata)))
     (assert (s/valid? ::resolver resolver) (s/explain-str ::resolver resolver))
     (assert (s/valid? ::args args) (s/explain-str ::args args))
