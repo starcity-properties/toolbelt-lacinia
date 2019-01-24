@@ -37,9 +37,6 @@
   (fn [v] (try (f v) (catch Throwable _ nil))))
 
 
-(def execute lacinia/execute)
-
-
 ;; =============================================================================
 ;; Resolver tools
 ;; =============================================================================
@@ -142,3 +139,22 @@
              ~body)
            (catch Throwable t#
              (exception-handler# context# params# resolved# t#)))))))
+
+
+;; =============================================================================
+;; Execute
+;; =============================================================================
+
+(defn execute
+  "Given a compiled schema and a query string, attempts to execute it by calling `com.walmartlabs.lacinia/execute`.
+  Options (in addition to what's specified in `com.walmartlabs.lacinia/execute`):
+  :unauthorized-handler - Handle unauthorized GraphQL queries, will use `default-unauthorized-handler` if not specified.
+  :exception-handler - Handle exceptions thrown by a resolver, should return a vavalid GraphQL error, will use
+  `default-exception-handler` if not specified."
+  [schema query variables context {:keys [unauthorized-handler exception-handler]
+                                   :or   {unauthorized-handler default-unauthorized-handler
+                                          exception-handler    default-exception-handler}
+                                   :as   opts}]
+  (binding [*unauthorized-handler* unauthorized-handler
+            *exception-handler*    exception-handler]
+    (lacinia/execute schema query variables context (dissoc opts :unauthorized-handler :exception-handler))))
