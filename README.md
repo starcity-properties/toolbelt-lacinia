@@ -1,4 +1,6 @@
 # toolbelt-lacinia
+[![CircleCI](https://circleci.com/gh/starcity-properties/toolbelt-lacinia.svg?style=svg&circle-token=c24540633a95aa3de4c076910850c088ddfc4e88)](https://circleci.com/gh/starcity-properties/toolbelt-lacinia)
+
 Lacinia tools library wrapping https://github.com/walmartlabs/lacinia for easier used across the Starcity codebase. Refer to the lacinia documentation for how to use Clojure with GraphQL.
 
 ## Getting started
