@@ -1,0 +1,23 @@
+# Clojure CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-clojure/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the Docker image
+      - image: circleci/clojure:tools-deps-1.10.0.411
+
+    working_directory: ~/repo
+
+    environment:
+      LEIN_ROOT: "true"
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+    
+    steps:
+      - checkout
+
+      # Run tests
+      - run: clj -A:test
