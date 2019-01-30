@@ -51,11 +51,10 @@ Resolvers will be restricted by default and not accessible by anyone, use the `:
                                                                             "com.walmartlabs.lacinia.resolve$with_error$reify__1391@492b2b77"]}
 ```
 
-We can customize how to handler unauthorized requests in a few different ways:
+We can customize how to handle unauthorized requests in a few different ways, with respecting the following order:
 - Adding the `:unauthorized-handler` key in the configuration map of `defresolver`
 - Providing an `:unauthorized-handler` in the opts map when running `execute`
 - Binding `*unauthorized-handler*`
-If combining several methods, the order above is in which handlers will be considered.
 
 
 ### Exceptions
@@ -74,11 +73,10 @@ If a resolver throws an exception, it will be caught and returned as a GraphQL e
                                                                             0x610b87b1
                                                                             "com.walmartlabs.lacinia.resolve$with_error$reify__1747@610b87b1"]}
 ```
-Similar to the unauthorized handler, we can customize how exceptions should be handled in a few different ways:
+Similar to the unauthorized handler, we can customize how to handle exceptions, with respecting the following order:
 - Adding the `:exception-handler` key in the configuration map of `defresolver`
 - Providing an `:exception-handler` in the opts map when running `execute`
 - Binding `*exception-handler*`
-If combining several methods, the order above is in which handlers will be considered.
 
 
 ## Work on toolbelt-lacinia
