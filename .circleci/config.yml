@@ -20,4 +20,4 @@ jobs:
       - checkout
 
       # Run tests
-      - run: clj -A:test
+      - run: clojure -A:test
