@@ -7,16 +7,17 @@ Add `toolbelt-lacinia` as a dependency to your `deps.edn`.
 {:deps {toolbelt-lacinia {:git/url "https://github.com/starcity-properties/toolbelt-lacinia.git" :sha <some-sha>}}}
 ```
 
-### Declare resolvers
+### Define resolvers
 Define a resolver.
 ```clojure 
 (require '[toolbelt.lacinia.core :refer :all)
 
+;; Specify a unique keyword as metadata, this will be used in the GraphQL schema.
 (defresolver ^:resolver/example example-resolver
- "Public resolver"
- [context params resolved]
- {:authorization true}
- (println "Resolving"))
+ "Public resolver"         ;; Doc string (optional)
+ [context params resolved] ;; Resolver arguments
+ {:authorization true}     ;; Configuration map
+ (println "Resolving"))    ;; Body
  
  (example-resolver {} {} {})
  Resolving
