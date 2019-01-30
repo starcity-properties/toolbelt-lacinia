@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the Docker image
-      - image: circleci/clojure:tools-deps-1.10.0.411
+      - image: starcity/clojure:1.10.0.441-lein-2.8.3
 
     working_directory: ~/repo
 
