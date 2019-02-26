@@ -22,6 +22,7 @@ Add `toolbelt-lacinia` as a dependency to your `project.clj`.
 [toolbelt-lacinia "0.0.1"]
 ```
 
+## Usage
 ### Define resolvers
 Define a resolver.
 ```clojure 
