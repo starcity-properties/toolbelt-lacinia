@@ -4,9 +4,22 @@
 Lacinia tools library wrapping https://github.com/walmartlabs/lacinia for easier used across the Starcity codebase. Refer to the lacinia documentation for how to use Clojure with GraphQL.
 
 ## Getting started
+### deps.edn
 Add `toolbelt-lacinia` as a dependency to your `deps.edn`.
 ```clojure
+;; Maven
+{:deps {toolbelt-lacinia {:mvn/version "0.0.1"}}}
+
+;; Github
 {:deps {toolbelt-lacinia {:git/url "https://github.com/starcity-properties/toolbelt-lacinia.git" :sha <some-sha>}}}
+
+;; Local dependency
+{:deps {toolbelt-lacinia {:local/root "/path/to/toolbelt-lacinia"}}}
+```
+### Leiningen
+Add `toolbelt-lacinia` as a dependency to your `project.clj`.
+```clojure
+[toolbelt-lacinia "0.0.1"]
 ```
 
 ### Define resolvers
